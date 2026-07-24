@@ -4,7 +4,8 @@ import { Appbar } from 'react-native-paper';
 
 import { LocalizationContext } from '../Translations';
 import NavigationHeaderBody from '../NavigationHeaderBody'
-import CustomAlertMessage from '../Share/CustomAlertMessage';
+import ConfirmationBottomSheetContent from '../Share/ConfirmationBottomSheetContent';
+import DynamicHeightBottomSheetModal from '../DynamicHeightBottomSheetModal';
 import { navigationRef } from '../../navigators/app_navigator';
 import Color from '../../themes/color';
 
@@ -12,8 +13,8 @@ class ProposeNewIndicatorNavHeader extends Component {
   static contextType = LocalizationContext;
   constructor(props) {
     super(props);
-    this.state = { isModalVisible: false };
     this.backHandler = null;
+    this.confirmationModalRef = React.createRef();
   }
 
   componentDidMount() {
@@ -32,47 +33,42 @@ class ProposeNewIndicatorNavHeader extends Component {
   }
 
   confirmGoBack() {
-    this.setState({ isModalVisible: false });
     !!this.props.handleUnconfirmedIndicator && this.props.handleUnconfirmedIndicator();
     setTimeout(() => {
       navigationRef.current?.goBack();
     }, 500)
   }
 
-  renderComfirmModal() {
-    const { translations } = this.context;
-    return <CustomAlertMessage
-              visible={this.state.isModalVisible}
-              title={translations.discardTheChanges}
-              description={translations.areYouSureYouWantToDiscardTheseNewProposedIndicator}
-              closeButtonLabel={translations.buttonLabelNo}
-              hasConfirmButton={true}
-              confirmButtonLabel={translations.buttonLabelYes}
-              isConfirmButtonDisabled={false}
-              onDismiss={() => this.setState({isModalVisible: false})}
-              onConfirm={() => this.confirmGoBack()}
-           />
-  }
-
   onBackPress = () => {
     if (this.props.searchBoxRef.current?.state.showResult)
       return this.props.searchBoxRef.current?.closeSearch()
 
-    this.setState({isModalVisible: true})
+    const { translations } = this.context;
+    this.confirmationModalRef.current?.setContent(
+      <ConfirmationBottomSheetContent
+        title={translations.discardTheChanges}
+        confirmationMessage={translations.areYouSureYouWantToDiscardTheseNewProposedIndicator}
+        onPress={() => {
+          this.confirmationModalRef.current?.dismiss();
+          this.confirmGoBack()
+        }}
+      />
+    );
+    this.confirmationModalRef.current?.present();
   }
 
   render() {
     return (
       <React.Fragment>
-        { this.props.isSearching && <View style={{ height: 64, width: '100%', position: 'absolute', top: 24, zIndex: 1, backgroundColor: 'white', opacity: 0.8 }}/> }
         <TouchableWithoutFeedback onPress={() => this.props.searchBoxRef.current?.closeSearch()}>
           <Appbar.Header style={{backgroundColor: Color.headerColor}}>
             <Appbar.BackAction onPress={() => this.onBackPress()} color='white' />
             <NavigationHeaderBody title={this.context.translations.proposeNewIndicatorTitle} />
+            { this.props.isSearching && <View style={{ height: 64, width: '110%', position: 'absolute', top: 0, zIndex: 1, backgroundColor: 'white', opacity: 0.8 }}/> }
           </Appbar.Header>
         </TouchableWithoutFeedback>
 
-        { this.renderComfirmModal() }
+        <DynamicHeightBottomSheetModal ref={this.confirmationModalRef} />
       </React.Fragment>
     )
   }

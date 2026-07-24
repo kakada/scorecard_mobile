@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import TextHighlight from 'react-native-text-highlighter';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 
 import {LocalizationContext} from '../Translations';
 import SwipeLeftButton from '../Share/SwipeLeftButton';
@@ -64,7 +64,7 @@ class ProposeNewIndicatorCardItem extends React.Component {
 
   renderTitle() {
     return <TextHighlight textToHighlight={this.getIndicatorName()} searchWords={[this.props.searchedText]} fontSize={bodyFontSize()} fontFamily={FontFamily.body} numberOfLines={2}
-              containerStyle={proposedIndicatorStyleHelper.getCardTitleStyles(this.props.isIndicatorBase)}
+              containerStyle={proposedIndicatorStyleHelper.getCardTitleStyles(this.props.isIndicatorBase, this.props.isOffline)}
            />
   }
 
@@ -73,7 +73,9 @@ class ProposeNewIndicatorCardItem extends React.Component {
             isOutlined={true}
             itemUuid={this.props.indicatorUuid}
             customTitle={this.renderTitle()}
-            subtitle={this.props.isIndicatorBase && proposedIndicatorHelper.getCardSubtitle(this.context.translations, this.props.scorecardUuid, this.props.indicatorableId)}
+            subtitle={
+              (this.props.isIndicatorBase && this.props.isOffline) && proposedIndicatorHelper.getCardSubtitle(this.context.translations, this.props.scorecardUuid, this.props.indicatorableId)
+            }
             subtitleStyle={{marginBottom: 6}}
             audio={this.getAudio()}
             playingUuid={this.props.playingUuid}

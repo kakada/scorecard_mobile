@@ -3,8 +3,8 @@
 >
 
     <queries>
-        <package android:name="org.instedd.ilabsea.community_scorecard.store" />
-        <package android:name="org.instedd.ilabsea.community_scorecard.services" />
+        <package android:name="kh.org.carecambodia.scorecard.store" />
+        <package android:name="kh.org.carecambodia.scorecard.services" />
         <intent>
             <action android:name="com.google.android.youtube.api.service.START" />
         </intent>
@@ -63,42 +63,12 @@
           <category android:name="android.intent.category.BROWSABLE" />
           <data
             android:scheme="https"
-            android:host="isaf.digital-csc.org"
+            android:host="digitalscorecard.org"
             android:pathPrefix="/scorecards"
           />
           <data
             android:scheme="http"
-            android:host="isaf.digital-csc.org"
-            android:pathPrefix="/scorecards"
-          />
-          <data
-            android:scheme="https"
-            android:host="isaf-stg.digital-csc.org"
-            android:pathPrefix="/scorecards"
-          />
-          <data
-            android:scheme="http"
-            android:host="isaf-stg.digital-csc.org"
-            android:pathPrefix="/scorecards"
-          />
-          <data
-            android:scheme="https"
-            android:host="isaf-stg.ilabsea.org"
-            android:pathPrefix="/scorecards"
-          />
-          <data
-            android:scheme="http"
-            android:host="isaf-stg.ilabsea.org"
-            android:pathPrefix="/scorecards"
-          />
-          <data
-            android:scheme="https"
-            android:host="scorecard-stg.dojoconnect.co"
-            android:pathPrefix="/scorecards"
-          />
-          <data
-            android:scheme="http"
-            android:host="scorecard-stg.dojoconnect.co"
+            android:host="digitalscorecard.org"
             android:pathPrefix="/scorecards"
           />
         </intent-filter>
@@ -107,7 +77,7 @@
 
       <provider
         android:name="androidx.core.content.FileProvider"
-        android:authorities="org.instedd.ilabsea.community_scorecard.provider"
+        android:authorities="kh.org.carecambodia.scorecard.provider"
         android:grantUriPermissions="true"
         android:exported="false">
         <meta-data
