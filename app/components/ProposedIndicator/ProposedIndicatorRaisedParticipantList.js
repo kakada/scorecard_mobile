@@ -30,7 +30,6 @@ class ProposedIndicatorRaisedParticipantList extends React.Component {
       visibleModal: false,
       selectedParticipant: null
     }
-    this.listRef = []
     this.prevOpenedRow = null;
   }
 
@@ -40,43 +39,46 @@ class ProposedIndicatorRaisedParticipantList extends React.Component {
     this.props.participantModalRef.current?.present();
   }
 
-  goToEdit = (participant, index) => {
-    this.listRef[index].close()
+  goToEdit = (participant, swipeableMethods) => {
+    swipeableMethods?.close();
     navigationRef.current?.navigate('ProposeNewIndicator', {scorecard_uuid: this.props.scorecardUuid, participant_uuid: participant.uuid, is_edit: true})
   }
 
-  showConfirmModal = (participant, index) => {
+  showConfirmModal = (participant, swipeableMethods) => {
     this.setState({visibleModal: true, selectedParticipant: participant})
-    this.listRef[index].close()
+    swipeableMethods?.close();
   }
 
-  renderRightButtons = (participant, index) => {
+  renderRightButtons = (participant, swipeableMethods) => {
     const {translations} = this.context;
     const btnStyles = getDeviceStyle({ height: 94, marginTop: 8, width: 90 }, { height: 83, marginTop: 8 })
-    return <View style={{flexDirection: 'row'}}>
-              <SwipeLeftButton label={translations.edit} backgroundColor={Color.lightBlue} customStyle={btnStyles} onPress={() => this.goToEdit(participant, index)} />
-              <SwipeLeftButton label={translations.delete} customStyle={btnStyles} onPress={() => this.showConfirmModal(participant, index)} />
-           </View>
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <SwipeLeftButton label={translations.edit} backgroundColor={Color.lightBlue} customStyle={btnStyles} onPress={() => this.goToEdit(participant, swipeableMethods)} />
+        <SwipeLeftButton label={translations.delete} customStyle={btnStyles} onPress={() => this.showConfirmModal(participant, swipeableMethods)} />
+      </View>
+    );
   }
 
-  handleCloseRow = (index) => {
-    if (this.prevOpenedRow && this.prevOpenedRow !== this.listRef[index])
+  handleCloseRow = (swipeableMethods) => {
+    if (this.prevOpenedRow && this.prevOpenedRow !== swipeableMethods) {
       this.prevOpenedRow.close();
-
-    this.prevOpenedRow = this.listRef[index];
+    }
+    this.prevOpenedRow = swipeableMethods;
   }
 
   renderParticipantList = () => {
     const mobileFontSize = getMobileFontSizeByPixelRatio(14.2, 14);
     const fontSize = getDeviceStyle(bodyFontSize(), mobileFontSize);
 
-    return Participant.getRaisedParticipants(this.props.scorecardUuid).map((participant, index) => {
+    return Participant.getRaisedParticipants(this.props.scorecardUuid).map((participant) => {
       return (
         <Swipeable key={participant.uuid}
-          ref={ref => { this.listRef[index] = ref }}
-          renderRightActions={() => (this.renderRightButtons(participant, index))}
+          renderRightActions={(progress, translation, swipeableMethods) => 
+            this.renderRightButtons(participant, swipeableMethods)
+          }
           containerStyle={{paddingBottom: 6, paddingHorizontal: 2}}
-          onSwipeableOpen={() => this.handleCloseRow(index) }
+          onSwipeableOpen={(direction, swipeableMethods) => this.handleCloseRow(swipeableMethods)}
           enabled={!this.props.isIndicatorBase}
         >
           <AudioCardView containerStyle={styles.participantCardContainer} hideAudioPlayer={true} titleStyle={[{marginTop: 0}, styles.label]}
@@ -102,15 +104,17 @@ class ProposedIndicatorRaisedParticipantList extends React.Component {
   }
 
   render() {
-    return <View style={{marginTop: 12}}>
-              {this.renderParticipantList()}
-              <ProposedIndicatorConfirmDeleteModal
-                visible={this.state.visibleModal}
-                participant={this.state.selectedParticipant}
-                onDismiss={() => this.setState({visibleModal: false, selectedParticipant: null})}
-                onConfirm={() => this.confirmDelete()}
-              />
-           </View>
+    return (
+      <View style={{marginTop: 12}}>
+        {this.renderParticipantList()}
+        <ProposedIndicatorConfirmDeleteModal
+          visible={this.state.visibleModal}
+          participant={this.state.selectedParticipant}
+          onDismiss={() => this.setState({visibleModal: false, selectedParticipant: null})}
+          onConfirm={() => this.confirmDelete()}
+        />
+      </View>
+    );
   }
 }
 

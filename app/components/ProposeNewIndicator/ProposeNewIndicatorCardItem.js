@@ -23,6 +23,11 @@ const styles = getDeviceStyle(cardItemTabletStyles, cardItemMobileStyles);
 class ProposeNewIndicatorCardItem extends React.Component {
   static contextType = LocalizationContext;
 
+  constructor(props) {
+    super(props);
+    this.swipeableMethods = null;
+  }
+
   getIndicatorName = () => {
     const languageIndicator = getLanguageIndicator(this.props.scorecardUuid, this.props.indicatorUuid, 'text');
     if (languageIndicator != undefined && !!languageIndicator.content)
@@ -46,14 +51,15 @@ class ProposeNewIndicatorCardItem extends React.Component {
            </View>
   }
 
-  renderRightButtons = () => {
+  renderRightButtons = (swipeableMethods) => {
+    this.swipeableMethods = swipeableMethods;
     const {translations} = this.context;
     const btnStyles = proposedIndicatorStyleHelper.getStyleByProposeType(this.props.isIndicatorBase, 'swipeableButton')
     return <View style={{flexDirection: 'row'}}>
               {this.props.indicatorType == CUSTOM &&
-                <SwipeLeftButton label={translations.edit} backgroundColor={Color.lightBlue} customStyle={btnStyles} onPress={() => this.props.onPressEdit && this.props.onPressEdit()} />
+                <SwipeLeftButton label={translations.edit} backgroundColor={Color.lightBlue} customStyle={btnStyles} onPress={() => this.props.onPressEdit && this.props.onPressEdit(swipeableMethods)} />
               }
-              <SwipeLeftButton label={translations.delete} customStyle={btnStyles} onPress={() => this.props.onPressDelete && this.props.onPressDelete()} />
+              <SwipeLeftButton label={translations.delete} customStyle={btnStyles} onPress={() => this.props.onPressDelete && this.props.onPressDelete(swipeableMethods)} />
            </View>
   }
 
@@ -81,7 +87,7 @@ class ProposeNewIndicatorCardItem extends React.Component {
             playingUuid={this.props.playingUuid}
             updatePlayingUuid={(uuid) => this.props.updatePlayingUuid(uuid)}
             containerStyle={[proposedIndicatorStyleHelper.getStyleByProposeType(this.props.isIndicatorBase, 'outlineCard'), this.props.containerStyle]}
-            onPressItem={() => !!this.props.onPressItem && this.props.onPressItem()}
+            onPressItem={() => !!this.props.onPressItem && this.props.onPressItem(this.swipeableMethods)}
             badge={ this.props.indicatorType == CUSTOM && this.renderNewBadge() }
           />
   }
@@ -89,11 +95,13 @@ class ProposeNewIndicatorCardItem extends React.Component {
   render() {
     return (
       <Swipeable
-        ref={ref => this.props.updateListRef && this.props.updateListRef(ref)}
-        renderRightActions={() => (this.renderRightButtons())}
+        renderRightActions={(progress, translation, swipeableMethods) => this.renderRightButtons(swipeableMethods)}
         containerStyle={{paddingBottom: 0, paddingHorizontal: 2}}
         enabled={this.props.isSwipeable}
-        onSwipeableOpen={() => this.props.onSwipeableOpen()}
+        onSwipeableOpen={(direction, swipeableMethods) => {
+          this.swipeableMethods = swipeableMethods;
+          if (this.props.onSwipeableOpen) this.props.onSwipeableOpen(swipeableMethods);
+        }}
       >
         {this.renderCard()}
       </Swipeable>
@@ -101,4 +109,4 @@ class ProposeNewIndicatorCardItem extends React.Component {
   }
 }
 
-export default ProposeNewIndicatorCardItem
+export default ProposeNewIndicatorCardItem;

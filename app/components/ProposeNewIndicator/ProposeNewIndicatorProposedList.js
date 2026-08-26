@@ -18,25 +18,24 @@ class ProposeNewIndicatorProposedList extends React.Component {
   constructor(props) {
     super(props)
     this.selectedIndicatorableId = null;
-    this.listRef = []
     this.prevOpenedRow = null;
     this.confirmationModalRef = React.createRef();
   }
 
-  editProposedIndicator = (indicator, indicatorableId, index) => {
+  editProposedIndicator = (indicator, indicatorableId, swipeableMethods) => {
     let indicatorParams = indicator
     indicatorParams['indicatorable_id'] = indicatorableId
     this.props.bottomSheetRef.current?.setSnapPoints(participantModalSnapPoints)
     const proposedIndicatorParams = { scorecardUuid: this.props.scorecardUuid, indicator: indicatorParams };
     proposedIndicatorHelper.showFormModal(this.props.bottomSheetRef, this.props.formModalRef, proposedIndicatorParams);
-    this.listRef[index].close()
+    swipeableMethods?.close();
   }
 
-  handleCloseRow = (index) => {
-    if (this.prevOpenedRow && this.prevOpenedRow !== this.listRef[index])
+  handleCloseRow = (swipeableMethods) => {
+    if (this.prevOpenedRow && this.prevOpenedRow !== swipeableMethods)
       this.prevOpenedRow.close();
 
-    this.prevOpenedRow = this.listRef[index];
+    this.prevOpenedRow = swipeableMethods;
   }
 
   renderModalContent(customIndicator) {
@@ -52,8 +51,8 @@ class ProposeNewIndicatorProposedList extends React.Component {
            />
   }
 
-  showCustomIndicatorModal(customIndicator, index) {
-    this.listRef[index].close()
+  showCustomIndicatorModal(customIndicator, swipeableMethods) {
+    swipeableMethods?.close();
     this.props.bottomSheetRef.current?.setBodyContent(this.renderModalContent(customIndicator));
     this.props.bottomSheetRef.current?.setSnapPoints(customIndicatorModalSnapPoints)
     setTimeout(() => {
@@ -62,16 +61,15 @@ class ProposeNewIndicatorProposedList extends React.Component {
   }
 
   renderList = () => {
-    return this.props.proposedIndicators.map((proposedIndicator, index) => {
+    return this.props.proposedIndicators.map((proposedIndicator) => {
       const indicator = Indicator.findByIndicatorableId(proposedIndicator.indicatorable_id, proposedIndicator.indicatorable_type, this.props.endpointId)
       if (!!indicator)
         return <ProposeNewIndicatorCardItem key={proposedIndicator.uuid} scorecardUuid={this.props.scorecardUuid} searchedText=''
                   indicatorName={indicator.name} indicatorableId={proposedIndicator.indicatorable_id} indicatorType={indicator.type} indicatorUuid={indicator.indicator_uuid}
-                  updateListRef={(ref) => this.listRef[index] = ref}
-                  onSwipeableOpen={() => this.handleCloseRow(index) }
-                  onPressItem={() => this.props.isIndicatorBase && this.editProposedIndicator(indicator, proposedIndicator.indicatorable_id, index)}
-                  onPressEdit={() => this.showCustomIndicatorModal(indicator, index)}
-                  onPressDelete={() => this.openConfirmationModal(proposedIndicator.indicatorable_id, index)}
+                  onSwipeableOpen={(swipeableMethods) => this.handleCloseRow(swipeableMethods)}
+                  onPressItem={(swipeableMethods) => this.props.isIndicatorBase && this.editProposedIndicator(indicator, proposedIndicator.indicatorable_id, swipeableMethods)}
+                  onPressEdit={(swipeableMethods) => this.showCustomIndicatorModal(indicator, swipeableMethods)}
+                  onPressDelete={(swipeableMethods) => this.openConfirmationModal(proposedIndicator.indicatorable_id, swipeableMethods)}
                   isIndicatorBase={this.props.isIndicatorBase}
                   playingUuid={this.props.playingUuid}
                   updatePlayingUuid={(uuid) => this.props.updatePlayingUuid(uuid)}
@@ -79,7 +77,7 @@ class ProposeNewIndicatorProposedList extends React.Component {
     })
   }
 
-  openConfirmationModal = (indicatorableId, index) => {
+  openConfirmationModal = (indicatorableId, swipeableMethods) => {
     const {translations} = this.context
     this.selectedIndicatorableId = indicatorableId
 
@@ -95,7 +93,7 @@ class ProposeNewIndicatorProposedList extends React.Component {
     );
     this.confirmationModalRef.current?.present();
 
-    this.listRef[index].close()
+    swipeableMethods?.close();
   }
 
   confirmDelete = () => {

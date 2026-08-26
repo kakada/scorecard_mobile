@@ -22,7 +22,6 @@ export default class ScorecardItem extends Component {
 
   constructor(props) {
     super(props);
-    this.itemRef = null;
     this.state = {
       isDeletable: false,
     }
@@ -33,14 +32,15 @@ export default class ScorecardItem extends Component {
     this.setState({ isDeletable: await Scorecard.isDeletable(this.props.scorecard) });
   }
 
-  deleteScorecard = () => {
+  deleteScorecard = (swipeableMethods) => {
     this.props.showDeleteModal();
-    this.itemRef.close();
+    if (swipeableMethods?.close)
+      swipeableMethods.close();
   }
 
-  renderDeleteAction = () => {
+  renderDeleteAction = (progress, swipeableMethods) => {
     return (
-      <RectButton onPress={() => this.deleteScorecard()} style={responsiveStyles.deleteContainer}>
+      <RectButton onPress={() => this.deleteScorecard(swipeableMethods)} style={responsiveStyles.deleteContainer}>
         <Text style={[{color: Color.whiteColor}, responsiveStyles.deleteLabel]}>{ this.context.translations.delete }</Text>
       </RectButton>
     )
@@ -56,7 +56,6 @@ export default class ScorecardItem extends Component {
 
     return (
       <Swipeable key={uuidv4()}
-        ref={ref => { this.itemRef = ref }}
         enabled={this.state.isDeletable}
         renderRightActions={this.renderDeleteAction}
         onSwipeableOpen={() => this.isResumable = false }
