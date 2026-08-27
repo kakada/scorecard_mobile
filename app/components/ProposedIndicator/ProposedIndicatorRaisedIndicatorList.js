@@ -29,8 +29,6 @@ class ProposedIndicatorRaisedIndicatorList extends React.Component {
     this.state = {
       visibleModal: false,
     }
-    this.listRef = []
-    this.prevOpenedRow = null;
     this.selectedIndicatorableId;
   }
 
@@ -40,22 +38,19 @@ class ProposedIndicatorRaisedIndicatorList extends React.Component {
     this.props.participantModalRef.current?.present();
   }
 
-  renderDeleteButton(indicator, index)  {
+  renderDeleteButton(indicator, swipeableMethods)  {
     const btnStyles = getDeviceStyle({ height: 105, marginTop: 12, width: 90 }, { height: isSmallMobileScreenDevice() ? 90 : 95, marginTop: 14 })
-    return <SwipeLeftButton label={this.context.translations.delete} customStyle={btnStyles} onPress={() =>  this.showConfirmModal(indicator, index)} />
+    return <SwipeLeftButton
+              label={this.context.translations.delete}
+              customStyle={btnStyles}
+              onPress={() =>  this.showConfirmModal(indicator, swipeableMethods)}
+           />
   }
 
-  showConfirmModal = (indicator, index) => {
+  showConfirmModal = (indicator, swipeableMethods) => {
     this.setState({visibleModal: true})
     this.selectedIndicatorableId = indicator.indicatorable_id;
-    this.listRef[index].close()
-  }
-
-  handleCloseRow = (index) => {
-    if (this.prevOpenedRow && this.prevOpenedRow !== this.listRef[index])
-      this.prevOpenedRow.close();
-
-    this.prevOpenedRow = this.listRef[index];
+    swipeableMethods.close();
   }
 
   renderIndicatorList = () => {
@@ -63,9 +58,9 @@ class ProposedIndicatorRaisedIndicatorList extends React.Component {
       return (
         <Swipeable
           key={indicator.uuid}
-          ref={ref => { this.listRef[index] = ref }}
-          renderRightActions={() => (this.renderDeleteButton(indicator, index))}
-          onSwipeableOpen={() => this.handleCloseRow(index) }
+          renderRightActions={(progress, translation, swipeableMethods) => 
+            this.renderDeleteButton(indicator, swipeableMethods)
+          }
           enabled={this.props.isIndicatorBase}
         >
           <AudioCardView

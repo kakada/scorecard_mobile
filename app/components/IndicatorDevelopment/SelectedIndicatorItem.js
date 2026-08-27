@@ -30,7 +30,6 @@ class SelectedIndicatorItem extends Component {
     };
 
     this.isComponentUnmount = false;
-    this.itemRef = null;
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -50,8 +49,9 @@ class SelectedIndicatorItem extends Component {
     this.isComponentUnmount = true;
   }
 
-  handleRemoveIndicator() {
-    this.itemRef.close();
+  handleRemoveIndicator(swipeableMethods) {
+    if (swipeableMethods?.close)
+      swipeableMethods.close();
 
     setTimeout(() => {
       this.props.addToProposed(this.props.indicator);
@@ -83,13 +83,23 @@ class SelectedIndicatorItem extends Component {
           />
   }
 
-  renderDeleteButton()  {
-    return <SwipeLeftButton label={this.context.translations.delete} customStyle={{marginTop: 32, marginBottom: 6, width: 90}} onPress={() =>  this.handleRemoveIndicator()} />
+  renderDeleteButton = (progress, translation, swipeableMethods) => {
+    return <SwipeLeftButton
+              label={this.context.translations.delete}
+              customStyle={{marginTop: 32, marginBottom: 6, width: 90}}
+              onPress={() => this.handleRemoveIndicator(swipeableMethods)}
+           />
   }
 
   render() {
     return (
-      <Swipeable renderRightActions={() => this.renderDeleteButton()} ref={ref => { this.itemRef = ref }} enabled={!this.props.hasRating} containerStyle={{paddingTop: 6}}>
+      <Swipeable
+        renderRightActions={(progress, translation, swipeableMethods) =>
+          this.renderDeleteButton(progress, translation, swipeableMethods)
+        }
+        enabled={!this.props.hasRating}
+        containerStyle={{paddingTop: 6}}
+      >
         <View style={{marginHorizontal: 2}}>{ this.renderContent() }</View>
       </Swipeable>
     )
