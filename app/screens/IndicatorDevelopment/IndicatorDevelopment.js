@@ -179,8 +179,10 @@ class IndicatorDevelopment extends Component {
   }
 
   updateSelectedIndicatorsOrder(indicators) {
-    if (!!indicators)
+    if (!!indicators) {
       this.props.setSelectedIndicators(indicators);
+      this.saveSelectedIndicator()
+    }
   }
 
   getButtonLabel(translations) {

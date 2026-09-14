@@ -34,7 +34,10 @@ class ProposedIndicatorConfirmDeleteModal extends React.Component {
   }
 
   render() {
-    return <DynamicHeightBottomSheetModal ref={this.confirmationModalRef} />
+    return <DynamicHeightBottomSheetModal
+              ref={this.confirmationModalRef}
+              onDismiss={this.props.onDismiss}
+           />
   }
 }
 
