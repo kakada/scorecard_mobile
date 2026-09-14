@@ -7,6 +7,7 @@ import { LocalizationContext } from '../Translations';
 import Color from '../../themes/color';
 import { environment } from '../../config/environment';
 import { FontFamily } from '../../assets/stylesheets/theme/font';
+import LinkWithWebView from '../LinkWithWebView/LinkWithWebView';
 
 class SettingMenu extends Component {
   static contextType = LocalizationContext;
@@ -24,7 +25,7 @@ class SettingMenu extends Component {
       this.getBackendUrl();
     });
   }
-  
+
   componentWillUnmount() {
     this.focusListener && this.focusListener();
   }
@@ -42,7 +43,8 @@ class SettingMenu extends Component {
   }
 
   render() {
-    const { translations } = this.context;
+    const { translations, appLanguage } = this.context;
+    const FAM_REPORTING_URL = `https://digitalscorecard.org/fam_reporting?locale=${appLanguage}&hide_back_button=true`;
 
     return (
       <Menu
@@ -59,14 +61,24 @@ class SettingMenu extends Component {
           onPress={() => this.navigate('Setting', { backend_url: this.backendUrl })}
           title={translations.setting}
           titleStyle={{ fontFamily: FontFamily.body }}
-          leadingIcon='wrench'
+          leadingIcon='wrench-outline'
         />
+
+        <Divider />
+        <LinkWithWebView url={FAM_REPORTING_URL}>
+          <Menu.Item
+            title={translations.report_to_fam}
+            titleStyle={{ fontFamily: FontFamily.body }}
+            leadingIcon='comment-alert-outline'
+          />
+        </LinkWithWebView>
+
         <Divider />
         <Menu.Item
           onPress={() => this.navigate('About', null)}
           title={translations.about}
           titleStyle={{ fontFamily: FontFamily.body }}
-          leadingIcon='information'
+          leadingIcon='information-outline'
         />
       </Menu>
     );
