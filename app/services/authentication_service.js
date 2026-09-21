@@ -71,7 +71,7 @@ const authenticationService = (() => {
     if (!!backendUrl) AsyncStorage.setItem('ENDPOINT_URL', backendUrl);
     AsyncStorage.setItem('SETTING', JSON.stringify({
       backendUrl: backendUrl,
-      email: email,
+      email: email.trim(),
       password: password,
       proposedIndicatorMethod: await settingHelper.getSelectedProposedIndicatorMethodName(),
     }));

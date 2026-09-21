@@ -7,7 +7,7 @@ const SessionApi = {
       method: 'POST',
       params: {
         user: {
-          email: username,
+          email: username.trim(),
           password: password,
         },
       },

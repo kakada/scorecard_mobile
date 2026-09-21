@@ -71,9 +71,12 @@ class SettingUrlEndpointPicker extends React.Component {
   async showBottomSheetModal() {
     this.defaultSavedEndpointUrl = await settingHelper.getSavedEndpointUrl();
 
-    this.props.formRef.current?.setSnapPoints(settingEndpointModalSnapPoints);
-    this.props.formRef.current?.setBodyContent(this.renderBottomSheetPickerMain());
-    this.props.formModalRef.current?.present();
+    // Start from the confirmed server, so a selection that was not confirmed with the Update button is discarded
+    this.setState({ currentSelectedEndpoint: this.props.selectedEndpointUrl }, () => {
+      this.props.formRef.current?.setSnapPoints(settingEndpointModalSnapPoints);
+      this.props.formRef.current?.setBodyContent(this.renderBottomSheetPickerMain());
+      this.props.formModalRef.current?.present();
+    });
   }
 
   isDeletable(endpointUrl) {
@@ -144,7 +147,7 @@ class SettingUrlEndpointPicker extends React.Component {
           title={translations.serverUrl}
           label={translations.selectServerUrl}
           items={this.state.endpointUrls}
-          selectedItem={this.state.currentSelectedEndpoint}
+          selectedItem={this.props.selectedEndpointUrl}
           isRequire={true}
           showSubtitle={true}
           showPicker={() => this.showBottomSheetModal()}

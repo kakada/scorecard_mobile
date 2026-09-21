@@ -190,7 +190,7 @@ class SettingMain extends React.Component {
 
   render() {
     return (
-      <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1, backgroundColor: Color.whiteColor }}>
+      <ScrollView nestedScrollEnabled={true} keyboardShouldPersistTaps='handled' contentContainerStyle={{ flexGrow: 1, backgroundColor: Color.whiteColor }}>
         <Pressable style={responsiveStyles.container}>
           <Spinner
             visible={this.state.isLoading}

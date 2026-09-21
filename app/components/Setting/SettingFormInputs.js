@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
 import {LocalizationContext} from '../Translations';
@@ -10,17 +10,18 @@ import { pressableItemSize } from '../../utils/component_util';
 class SettingFormInputs extends React.Component {
   static contextType = LocalizationContext
   state = {
-    showPasswordIcon: 'eye',
+    isPasswordVisible: false,
   }
 
   renderShowPasswordIcon = () => {
     return (
       <TextInput.Icon
-        name={this.state.showPasswordIcon}
+        icon={this.state.isPasswordVisible ? 'eye-off' : 'eye'}
         color="#959595"
+        forceTextInputFocus={false}
         accessibilityLabel='toggle password visibility'
         style={{width: pressableItemSize(), height: pressableItemSize()}}
-        onPress={() => this.setState({ showPasswordIcon: this.state.showPasswordIcon == 'eye' ? 'eye-off' : 'eye' })}
+        onPress={() => this.setState({ isPasswordVisible: !this.state.isPasswordVisible })}
       />
     )
   }
@@ -50,7 +51,10 @@ class SettingFormInputs extends React.Component {
             accessibilityLabel="password text input"
             onChangeText={this.props.onChangeText}
             message={translations[this.props.passwordErrorMsg]}
-            secureTextEntry={this.state.showPasswordIcon == 'eye' ? true : false}
+            secureTextEntry={!this.state.isPasswordVisible}
+            // Keep the Android keyboard in password mode (no suggestions, microphone disabled) while the password is visible.
+            // Only set it when visible: 'visible-password' overrides secureTextEntry, so it would stop the password from being masked.
+            keyboardType={Platform.OS === 'android' && this.state.isPasswordVisible ? 'visible-password' : 'default'}
             right={this.renderShowPasswordIcon()}
           />
   }
