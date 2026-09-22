@@ -20,6 +20,9 @@ const validationMsg = (fieldName, value) => {
 
   if (value == '') return undefined;
 
+  // Surrounding spaces in an email are ignored, they are trimmed before sending the request
+  if (fieldName === 'email' && typeof value === 'string') value = value.trim();
+
   formValue[fieldName] = value;
 
   let formField = {};
