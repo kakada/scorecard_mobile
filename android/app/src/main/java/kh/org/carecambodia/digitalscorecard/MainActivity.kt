@@ -1,4 +1,4 @@
-package kh.org.carecambodia.scorecard;
+package kh.org.carecambodia.digitalscorecard;
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

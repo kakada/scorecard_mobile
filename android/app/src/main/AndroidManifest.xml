@@ -77,7 +77,7 @@
 
       <provider
         android:name="androidx.core.content.FileProvider"
-        android:authorities="kh.org.carecambodia.scorecard.provider"
+        android:authorities="kh.org.carecambodia.digitalscorecard.provider"
         android:grantUriPermissions="true"
         android:exported="false">
         <meta-data

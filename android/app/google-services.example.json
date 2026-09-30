@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "CHANGE_ME",
         "android_client_info": {
-          "package_name": "kh.org.carecambodia.scorecard"
+          "package_name": "kh.org.carecambodia.digitalscorecard"
         }
       },
       "oauth_client": [
