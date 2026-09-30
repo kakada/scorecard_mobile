@@ -1,4 +1,4 @@
-package kh.org.carecambodia.scorecard
+package kh.org.carecambodia.digitalscorecard
 
 import android.provider.Settings
 import com.facebook.react.bridge.*

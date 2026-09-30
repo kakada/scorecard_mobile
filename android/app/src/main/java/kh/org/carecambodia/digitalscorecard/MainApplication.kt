@@ -1,4 +1,4 @@
-package kh.org.carecambodia.scorecard
+package kh.org.carecambodia.digitalscorecard
  
 import android.app.Application
 import com.facebook.react.PackageList
